@@ -16,7 +16,7 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ public class Adapter {
 
 
     public static List<String> compatibleVersions(){
-        return Arrays.asList("1.9", "1.10", "1.11", "1.12", "1.13", "1.14", "1.15", "1.16", "1.17");
+        return Collections.singletonList("1.17");
     }
 
 
