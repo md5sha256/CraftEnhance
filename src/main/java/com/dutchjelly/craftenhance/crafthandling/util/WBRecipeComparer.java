@@ -1,13 +1,12 @@
 package com.dutchjelly.craftenhance.crafthandling.util;
 
 import com.dutchjelly.craftenhance.IMatcher;
-import com.dutchjelly.craftenhance.messaging.Debug;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class WBRecipeComparer {
 
@@ -91,7 +90,7 @@ public class WBRecipeComparer {
     }
 
     private static ItemStack[] ensureNoGaps(ItemStack[] items){
-        return Arrays.asList(items).stream().filter(x -> x != null).toArray(ItemStack[]::new);
+        return Arrays.stream(items).filter(Objects::nonNull).toArray(ItemStack[]::new);
     }
 
     public static boolean ingredientsMatch(ItemStack[] a, ItemStack[] b, IMatcher<ItemStack> matcher){
@@ -122,7 +121,7 @@ public class WBRecipeComparer {
                 }
             }
         }
-        return !Arrays.stream(used).anyMatch(x -> x == false);
+        return Arrays.stream(used).allMatch(x -> x);
     }
 
 }

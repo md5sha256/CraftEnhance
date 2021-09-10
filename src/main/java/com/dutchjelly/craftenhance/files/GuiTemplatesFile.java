@@ -3,7 +3,6 @@ package com.dutchjelly.craftenhance.files;
 import com.dutchjelly.craftenhance.ConfigError;
 import com.dutchjelly.craftenhance.gui.guis.GUIElement;
 import com.dutchjelly.craftenhance.gui.templates.GuiTemplate;
-import com.dutchjelly.craftenhance.messaging.Debug;
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;

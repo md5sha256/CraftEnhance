@@ -1,14 +1,14 @@
 package com.dutchjelly.craftenhance.itemcreation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dutchjelly.bukkitadapter.Adapter;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemCreator {
 	
@@ -31,7 +31,7 @@ public class ItemCreator {
 		int durability = tryParse(args[0], -1);
 		if(durability < 0 || durability > 100) return ParseResult.NO_PERCENT;
 		short maxDurability = item.getType().getMaxDurability();
-		item = Adapter.SetDurability(item,(int) (maxDurability - (maxDurability * (double)durability/100)));
+		item = Adapter.setDurability(item,(int) (maxDurability - (maxDurability * (double)durability/100)));
 		return ParseResult.SUCCESS;
 	}
 	
@@ -42,7 +42,7 @@ public class ItemCreator {
 		if(lineNumber == 0) return ParseResult.NO_NUMBER;
 		String loreLine = ChatColor.translateAlternateColorCodes('&', joinRemaining(1));
 		ItemMeta meta = item.getItemMeta();
-		List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<String>();
+		List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
 		
 		while(lore.size() < lineNumber)
 			lore.add("");
@@ -72,7 +72,7 @@ public class ItemCreator {
 	
 	private void clearEnchants(){
 		ItemMeta meta = item.getItemMeta();
-		meta.getEnchants().keySet().forEach(x -> meta.removeEnchant(x));
+		meta.getEnchants().keySet().forEach(meta::removeEnchant);
 		item.setItemMeta(meta);
 	}
 	
@@ -118,15 +118,14 @@ public class ItemCreator {
 	private ItemFlag getItemFlag(String arg){
 		try{
 			return ItemFlag.valueOf(arg.toUpperCase());
-		}catch(Exception e){
+		}catch(IllegalArgumentException e){
 			return null;
 		}
 	}
 	
 	private Enchantment getEnchantment(String arg){
 		try{
-		    Enchantment olderMethod = EnchantmentUtil.getByName(arg);
-		    return olderMethod;
+			return EnchantmentUtil.getByName(arg);
 			//return EnchantmentWrapper.getByKey(NamespacedKey.minecraft(arg));
 		}catch(Exception e){
 			return null;
@@ -152,18 +151,16 @@ public class ItemCreator {
 	}
 	
 	private String joinRemaining(int start){
-		String joined = "";
+		StringBuilder joined = new StringBuilder();
 		for(int i = start; i < args.length; i++)
-			joined += args[i] + (i+1 == args.length ? "" :" ");
-		return joined;
+			joined.append(args[i]).append(i + 1 == args.length ? "" : " ");
+		return joined.toString();
 	}
 	
 	private String popFirstArg(){
 		String first = args[0];
-		String newArgs[] = new String[args.length-1];
-		for(int i = 0; i < args.length-1; i++){
-			newArgs[i] = args[i+1];
-		}
+		String[] newArgs = new String[args.length-1];
+		System.arraycopy(args, 1, newArgs, 0, args.length - 1);
 		args = newArgs;
 		return first;
 	}

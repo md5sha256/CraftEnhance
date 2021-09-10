@@ -5,10 +5,10 @@ import org.bukkit.entity.Player;
 
 public interface ICommand {
 	
-	public String getDescription();
+	String getDescription();
 	
-	public void handlePlayerCommand(Player p, String[] args);
+	void handlePlayerCommand(Player p, String[] args);
 	
-	public void handleConsoleCommand(CommandSender sender, String[] args);
+	void handleConsoleCommand(CommandSender sender, String[] args);
 	
 }

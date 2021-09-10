@@ -1,18 +1,14 @@
 package com.dutchjelly.craftenhance.crafthandling.recipes;
 
-import com.dutchjelly.craftenhance.ConfigError;
 import com.dutchjelly.craftenhance.CraftEnhance;
 import com.dutchjelly.craftenhance.IEnhancedRecipe;
 import com.dutchjelly.craftenhance.crafthandling.util.ItemMatchers;
 import com.dutchjelly.craftenhance.crafthandling.util.ServerRecipeTranslator;
 import com.dutchjelly.craftenhance.crafthandling.util.WBRecipeComparer;
 import com.dutchjelly.craftenhance.files.FileManager;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -22,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class WBRecipe implements IEnhancedRecipe {
@@ -171,7 +168,7 @@ public class WBRecipe implements IEnhancedRecipe {
         serialized.put("page", page);
         serialized.put("result", fm.getItemKey(result));
 
-        String recipeKeys[] = new String[content.length];
+        String[] recipeKeys = new String[content.length];
         for(int i = 0; i < content.length; i++){
             recipeKeys[i] = fm.getItemKey(content[i]);
         }
@@ -184,7 +181,7 @@ public class WBRecipe implements IEnhancedRecipe {
         if(result == null)
             return "recipe cannot have null result";
 
-        if(content.length == 0 || !Arrays.stream(content).anyMatch(x -> x != null))
+        if(content.length == 0 || Arrays.stream(content).noneMatch(Objects::nonNull))
             return "recipe content cannot be empty";
 
         return null;

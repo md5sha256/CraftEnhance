@@ -1,18 +1,15 @@
 package com.dutchjelly.craftenhance.commands.edititem;
 
-import com.dutchjelly.craftenhance.CraftEnhance;
+import com.dutchjelly.craftenhance.commandhandling.CommandRoute;
+import com.dutchjelly.craftenhance.commandhandling.CustomCmdHandler;
+import com.dutchjelly.craftenhance.commandhandling.ICommand;
 import com.dutchjelly.craftenhance.commandhandling.ICompletionProvider;
+import com.dutchjelly.craftenhance.itemcreation.ItemCreator;
+import com.dutchjelly.craftenhance.itemcreation.ParseResult;
 import com.dutchjelly.craftenhance.messaging.Messenger;
-import com.sun.tools.javac.code.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-
-import com.dutchjelly.craftenhance.commandhandling.ICommand;
-import com.dutchjelly.craftenhance.commandhandling.CommandRoute;
-import com.dutchjelly.craftenhance.commandhandling.CustomCmdHandler;
-import com.dutchjelly.craftenhance.itemcreation.ItemCreator;
-import com.dutchjelly.craftenhance.itemcreation.ParseResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,9 +33,9 @@ public class EnchantCmd implements ICommand, ICompletionProvider {
 
 	@Override
 	public void handlePlayerCommand(Player p, String[] args) {
-		ItemCreator creator = new ItemCreator(p.getInventory().getItemInHand(), args);
+		ItemCreator creator = new ItemCreator(p.getInventory().getItemInMainHand(), args);
 		ParseResult result = creator.enchant();
-		p.getInventory().setItemInHand(creator.getItem());
+		p.getInventory().setItemInMainHand(creator.getItem());
 		Messenger.Message(result.getMessage(), p);
 	}
 

@@ -1,8 +1,8 @@
 author: DutchJelly
 main: com.dutchjelly.craftenhance.CraftEnhance
 name: CraftEnhance
-version: 2.4.2
-api-version: 1.13
+version: 2.5.0
+api-version: 1.17
 commands:
   recipes:
     description: Opens a GUI to view the custom recipes. This is an alias of /ceh viewer. Use /recipes help to see the description.

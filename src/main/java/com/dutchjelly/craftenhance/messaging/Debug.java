@@ -1,7 +1,6 @@
 package com.dutchjelly.craftenhance.messaging;
 
 import com.dutchjelly.craftenhance.CraftEnhance;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Logger;
 
@@ -32,10 +31,10 @@ public class Debug {
 	public static void Send(Object[] arr){
 		if(arr == null) return;
 		logger.info(prefix + " ");
-		for(int i = 0; i < arr.length; i++){
-			if(arr[i] == null) continue;
-			logger.info(arr[i].toString());
-		}
+        for (Object o : arr) {
+            if (o == null) continue;
+            logger.info(o.toString());
+        }
 		logger.info("");
 	}
 }

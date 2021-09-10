@@ -1,10 +1,5 @@
 package com.dutchjelly.craftenhance.gui;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.dutchjelly.craftenhance.CraftEnhance;
 import com.dutchjelly.craftenhance.Pair;
 import com.dutchjelly.craftenhance.gui.guis.GUIElement;
@@ -14,8 +9,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GuiManager implements Listener {
 	
@@ -92,11 +94,10 @@ public class GuiManager implements Listener {
         }
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e){
-	    if(e.getPlayer() == null) return;
 
-	    UUID id = e.getPlayer().getUniqueId();
+        UUID id = e.getPlayer().getUniqueId();
 
 	    if(!chatWaiting.containsKey(id)) return;
 
@@ -122,8 +123,7 @@ public class GuiManager implements Listener {
         }
         Debug.Send("Opening a gui element: " + gui.getClass().getName());
         p.openInventory(gui.getInventory());
-        if(openGUIs.containsKey(id))
-            openGUIs.remove(id);
+        openGUIs.remove(id);
         openGUIs.put(id, gui);
 	}
 

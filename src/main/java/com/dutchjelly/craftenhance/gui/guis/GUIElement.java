@@ -1,9 +1,9 @@
 package com.dutchjelly.craftenhance.gui.guis;
 
 import com.dutchjelly.craftenhance.gui.GuiManager;
+import com.dutchjelly.craftenhance.gui.IButtonHandler;
 import com.dutchjelly.craftenhance.gui.templates.GuiTemplate;
 import com.dutchjelly.craftenhance.gui.util.ButtonType;
-import com.dutchjelly.craftenhance.gui.IButtonHandler;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -13,6 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,8 @@ public abstract class GUIElement implements InventoryHolder{
         this.player = player;
         this.previousGui = previousGui;
         buttonClickHandlers = new HashMap<>();
-        buttonClickHandlers.put(ButtonType.Back, Arrays.asList(this::handleBackBtnClicked));
+        buttonClickHandlers.put(ButtonType.Back,
+                Collections.singletonList(this::handleBackBtnClicked));
     }
 
     public void handleBackBtnClicked(ItemStack btn, ButtonType btnType){
@@ -70,7 +72,8 @@ public abstract class GUIElement implements InventoryHolder{
     }
 
     public void handleOutsideClick(InventoryClickEvent e){
-        if(!(e.getWhoClicked() instanceof Player)) return;
+        if(!(e.getWhoClicked() instanceof Player)) {
+        }
     }
 
     public void handleDragging(InventoryDragEvent e){
@@ -80,7 +83,7 @@ public abstract class GUIElement implements InventoryHolder{
         if(buttonClickHandlers.containsKey(type)){
             buttonClickHandlers.get(type).add(listener);
         }else{
-            buttonClickHandlers.put(type, Arrays.asList(listener));
+            buttonClickHandlers.put(type, Collections.singletonList(listener));
         }
     }
 

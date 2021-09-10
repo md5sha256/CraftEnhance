@@ -1,9 +1,5 @@
 package com.dutchjelly.craftenhance.gui.guis;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.dutchjelly.craftenhance.IEnhancedRecipe;
 import com.dutchjelly.craftenhance.gui.GuiManager;
 import com.dutchjelly.craftenhance.gui.templates.GuiTemplate;
@@ -11,12 +7,14 @@ import com.dutchjelly.craftenhance.gui.util.ButtonType;
 import com.dutchjelly.craftenhance.gui.util.GuiUtil;
 import com.dutchjelly.craftenhance.messaging.Debug;
 import com.dutchjelly.craftenhance.messaging.Messenger;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderEditor extends GUIElement {
 
@@ -53,7 +51,7 @@ public class OrderEditor extends GUIElement {
 		int requiredPages = Math.max((int)Math.ceil((double)recipes.size()/itemsPerPage), 1);
 
 
-		List<ItemStack> recipeItems = recipes.stream().map(x -> x.getResult()).collect(Collectors.toList());
+		List<ItemStack> recipeItems = recipes.stream().map(IEnhancedRecipe::getResult).collect(Collectors.toList());
 		inventories = new Inventory[requiredPages];
 		for(int i = 0; i < requiredPages; i++){
 			inventories[i] = GuiUtil.FillInventory(

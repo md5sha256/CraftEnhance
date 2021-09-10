@@ -1,7 +1,6 @@
 package com.dutchjelly.craftenhance.gui.guis;
 
 import com.dutchjelly.bukkitadapter.Adapter;
-import com.dutchjelly.craftenhance.CraftEnhance;
 import com.dutchjelly.craftenhance.crafthandling.RecipeLoader;
 import com.dutchjelly.craftenhance.gui.GuiManager;
 import com.dutchjelly.craftenhance.gui.templates.GuiTemplate;
@@ -9,7 +8,6 @@ import com.dutchjelly.craftenhance.gui.util.ButtonType;
 import com.dutchjelly.craftenhance.gui.util.GuiUtil;
 import com.dutchjelly.craftenhance.gui.util.InfoItemPlaceHolders;
 import com.dutchjelly.craftenhance.messaging.Debug;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,6 +18,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,13 +99,15 @@ public class RecipeDisabler extends GUIElement {
                 if(GuiUtil.isNull(result)) {
                     result = new ItemStack(Material.BARRIER);
                     ItemMeta meta = result.getItemMeta();
-                    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4Complex Recipe: " + Adapter.GetRecipeIdentifier(getRecipes().get(recipeIndex-1))));
+                    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4Complex Recipe: " + Adapter.getRecipeIdentifier(getRecipes().get(recipeIndex-1))));
                     meta.setLore(Arrays.asList("&eWARN: &fThis recipe is complex, which", "&f means that the result is only known", " &f&oafter&r&f the content of the crafting table is sent", " &fto the server. Think of repairing or coloring recipes.", " &f&nSo disabling is not recommended!"));
                     meta.setLore(meta.getLore().stream().map(x -> ChatColor.translateAlternateColorCodes('&', x)).collect(Collectors.toList()));
                     result.setItemMeta(meta);
                 }else{
                     ItemMeta meta = result.getItemMeta();
-                    meta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&3key: &f" + Adapter.GetRecipeIdentifier(getRecipes().get(recipeIndex-1)))));
+                    meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes(
+                            '&',
+                            "&3key: &f" + Adapter.getRecipeIdentifier(getRecipes().get(recipeIndex - 1)))));
                     result.setItemMeta(meta);
                 }
                 inventories[i].setItem(spot, result);

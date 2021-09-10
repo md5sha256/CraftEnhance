@@ -1,21 +1,20 @@
 package com.dutchjelly.craftenhance.commands.edititem;
 
+import com.dutchjelly.craftenhance.commandhandling.CommandRoute;
+import com.dutchjelly.craftenhance.commandhandling.CustomCmdHandler;
+import com.dutchjelly.craftenhance.commandhandling.ICommand;
+import com.dutchjelly.craftenhance.itemcreation.ItemCreator;
+import com.dutchjelly.craftenhance.itemcreation.ParseResult;
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.dutchjelly.craftenhance.commandhandling.ICommand;
-import com.dutchjelly.craftenhance.commandhandling.CommandRoute;
-import com.dutchjelly.craftenhance.commandhandling.CustomCmdHandler;
-import com.dutchjelly.craftenhance.itemcreation.ItemCreator;
-import com.dutchjelly.craftenhance.itemcreation.ParseResult;
-
 @CommandRoute(cmdPath="edititem.durability", perms="perms.item-editor")
 public class DurabilityCmd implements ICommand {
 
-	
+
 	private CustomCmdHandler handler;
-	
+
 	public DurabilityCmd(CustomCmdHandler handler){
 		this.handler = handler;
 	}
@@ -27,9 +26,9 @@ public class DurabilityCmd implements ICommand {
 
 	@Override
 	public void handlePlayerCommand(Player p, String[] args) {
-		ItemCreator creator = new ItemCreator(p.getInventory().getItemInHand(), args);
+		ItemCreator creator = new ItemCreator(p.getInventory().getItemInMainHand(), args);
 		ParseResult result = creator.setDurability();
-		p.getInventory().setItemInHand(creator.getItem());
+		p.getInventory().setItemInMainHand(creator.getItem());
 		Messenger.Message(result.getMessage(), p);
 	}
 

@@ -47,7 +47,7 @@ WBRecipeViewer:
       - "Go back to the previous GUI"
       glow: true
     12:
-      material: WORKBENCH
+      material: CRAFTING_TABLE
       name: "&6Enhanced crafting table recipe"
       lore:
       - "&fThe recipe is &3[shaped]&f"
@@ -93,7 +93,7 @@ WBRecipeEditor:
       - "Go back to the previous GUI"
       glow: true
     12:
-      material: WORKBENCH
+      material: CRAFTING_TABLE
       name: "&6Enhanced crafting table recipe"
       lore:
       - "&fThe recipe is &3[shaped]&f"
@@ -127,7 +127,7 @@ WBRecipeEditor:
       - ""
       glow: true
     7:
-      material: WEB
+      material: COBWEB
       name: "&fClick to change: &e[shaped]"
       lore:
       - ""

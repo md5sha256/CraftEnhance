@@ -1,11 +1,7 @@
 package com.dutchjelly.craftenhance.crafthandling;
 
 
-import java.util.List;
-
-
 import com.dutchjelly.craftenhance.IEnhancedRecipe;
-
 import com.dutchjelly.craftenhance.api.CraftEnhanceAPI;
 import com.dutchjelly.craftenhance.crafthandling.recipes.WBRecipe;
 import com.dutchjelly.craftenhance.crafthandling.util.CustomPrepareCraftEvent;
@@ -19,10 +15,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
-
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class RecipeInjector implements Listener{
 	
@@ -48,7 +48,7 @@ public class RecipeInjector implements Listener{
 
 	    Recipe serverRecipe = e.getRecipe();
 
-        Debug.Send("The server wants to inject " + serverRecipe.getResult().toString() + " ceh will check or modify this.");
+        Debug.Send("The server wants to inject " + serverRecipe.getResult() + " ceh will check or modify this.");
 
         List<RecipeGroup> possibleRecipeGroups = loader.findGroupsByResult(serverRecipe.getResult());
 
@@ -97,7 +97,8 @@ public class RecipeInjector implements Listener{
                         inv.setResult(sRecipe.getResult());
                         return;
                     }
-                }else continue;
+                }else {
+                }
             }
         }
         inv.setResult(null); //We found similar custom recipes, but none matched exactly. So set result to null.

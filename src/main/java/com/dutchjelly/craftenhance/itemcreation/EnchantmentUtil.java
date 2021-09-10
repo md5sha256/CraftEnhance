@@ -1,11 +1,12 @@
 package com.dutchjelly.craftenhance.itemcreation;
 
+import org.bukkit.enchantments.Enchantment;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.enchantments.Enchantment;
 
 public class EnchantmentUtil
 {

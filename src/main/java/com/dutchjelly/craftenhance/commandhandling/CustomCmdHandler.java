@@ -1,19 +1,18 @@
 package com.dutchjelly.craftenhance.commandhandling;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dutchjelly.craftenhance.CraftEnhance;
+import com.dutchjelly.craftenhance.messaging.Debug;
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import com.dutchjelly.craftenhance.messaging.Debug;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CustomCmdHandler implements TabCompleter{
 	
@@ -27,15 +26,13 @@ public class CustomCmdHandler implements TabCompleter{
 	public CustomCmdHandler(CraftEnhance main){
 		commandClasses = new HashMap<>();
 		this.main = main;
-		main.getDescription().getCommands().keySet().forEach(x ->{
-			main.getCommand(x).setTabCompleter(this);
-		});
+		main.getDescription().getCommands().keySet().forEach(x -> main.getCommand(x).setTabCompleter(this));
 	}
 	
 	//Load all command classes in baseClasses so they can handle commands.
 	public void loadCommandClasses(List<ICommand> baseClasses){
 		if(baseClasses == null) return;
-		baseClasses.forEach(x -> loadCommandClass(x));
+		baseClasses.forEach(this::loadCommandClass);
 	}
 	
 	//Load the command class baseClass by finding the annotation and 
@@ -97,23 +94,20 @@ public class CustomCmdHandler implements TabCompleter{
 	//Send options that could complete the given arguments to sender.
 	private void sendOptions(String[] args, CommandSender sender){
 		String[] emptyLast = new String[args.length+1];
-		for(int i = 0; i < args.length; i++) {
-			emptyLast[i] = args[i];
-		}
+		System.arraycopy(args, 0, emptyLast, 0, args.length);
 		emptyLast[args.length] = "";
 		String completions = String.join(", ", getTabCompleteMatches(emptyLast));
 		if(completions.equals("")) {
 			Messenger.Message("That is not a command.", sender);
 			return;
 		}
-		Messenger.MessageFromConfig("messages.commands.show-options", sender, completions);;
-	}
+		Messenger.MessageFromConfig("messages.commands.show-options", sender, completions);
+    }
 	
 	//Push the label argument to index 0 of the array of arguments.
 	private String[] pushLabelArg(String label, String[] args){
 		String[] pushed = new String[args.length+1];
-		for(int i = 1; i < pushed.length; i++)
-			pushed[i] = args[i-1];
+		System.arraycopy(args, 0, pushed, 1, pushed.length - 1);
 		pushed[0] = label;
 		return pushed;
 	}
@@ -122,11 +116,11 @@ public class CustomCmdHandler implements TabCompleter{
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		String[] completeArgs = pushLabelArg(label, args);
-		List<String> tabCompletion = new ArrayList<>();
-//		ICommand suitableExecutor = getExecutor(args);
+		//		ICommand suitableExecutor = getExecutor(args);
 //		if(suitableExecutor != null && suitableExecutor instanceof ICompletionProvider)
 //			tabCompletion.addAll(((ICompletionProvider)suitableExecutor).getCompletions(args));
-		tabCompletion.addAll(getTabCompleteMatches(pushLabelArg(label, args)));
+		List<String> tabCompletion = new ArrayList<>(getTabCompleteMatches(pushLabelArg(label,
+				args)));
 		return tabCompletion;
 	}
 	
@@ -134,9 +128,7 @@ public class CustomCmdHandler implements TabCompleter{
 	private String[] popArguments(int amount, String[] args){
 		if(amount == 0 || amount > args.length || args.length < 1) return args;
 		String[] popped = new String[args.length-1];
-		for(int i = 0; i < args.length-1; i++){
-			popped[i] = args[i+1];
-		}
+		System.arraycopy(args, 1, popped, 0, args.length - 1);
 		return popArguments(amount-1, popped);
 	}
 	
@@ -193,13 +185,13 @@ public class CustomCmdHandler implements TabCompleter{
 		if(annotation.perms().equals("") || annotation.perms() == null)
 			return true;
 		String perms = main.getConfig().getString(annotation.perms()) + "";
-		if(perms.trim() == "") return true;
+		if(perms.trim().equals("")) return true;
 		return sender.hasPermission(perms);
 	}
 	
 	//Find all possible tab completions for args.
 	private List<String> getTabCompleteMatches(String[] args){
-		List<String> completions = new ArrayList<String>();
+		List<String> completions = new ArrayList<>();
 		String completion;
 		for(ICommand cmdClass : commandClasses.keySet()){
 			CommandRoute annotation = commandClasses.get(cmdClass);

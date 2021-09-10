@@ -8,26 +8,28 @@ import com.dutchjelly.craftenhance.messaging.Messenger;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class RecipeLoader implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
         if(CraftEnhance.self().getConfig().getBoolean("learn-recipes"))
-            Adapter.DiscoverRecipes(e.getPlayer(), getLoadedServerRecipes());
+            Adapter.discoverRecipes(e.getPlayer(), getLoadedServerRecipes());
     }
 
     //Ensure one instance
@@ -172,16 +174,17 @@ public class RecipeLoader implements Listener {
         if(alwaysSimilar == null){
             Recipe serverRecipe = recipe.getServerRecipe();
             server.addRecipe(serverRecipe);
-            Debug.Send("Added server recipe for " + serverRecipe.getResult().toString());
+            Debug.Send("Added server recipe for " + serverRecipe.getResult());
             loaded.put(recipe.getKey(), serverRecipe);
             if(CraftEnhance.self().getConfig().getBoolean("learn-recipes"))
-                Bukkit.getServer().getOnlinePlayers().forEach(x -> Adapter.DiscoverRecipes(x, Arrays.asList(serverRecipe)));
+                Bukkit.getServer().getOnlinePlayers().forEach(x -> Adapter.discoverRecipes(x,
+                        Collections.singletonList(serverRecipe)));
         }else{
-            Debug.Send("Didn't add server recipe for " + recipe.getKey() + " because a similar one was already loaded: " + alwaysSimilar.toString() + " with the result " + alwaysSimilar.getResult().toString());
+            Debug.Send("Didn't add server recipe for " + recipe.getKey() + " because a similar one was already loaded: " + alwaysSimilar + " with the result " + alwaysSimilar.getResult());
         }
 
         RecipeGroup group = new RecipeGroup();
-        group.setEnhancedRecipes(Arrays.asList(recipe));
+        group.setEnhancedRecipes(Collections.singletonList(recipe));
         group.setServerRecipes(similarServerRecipes);
         addGroup(group);
     }
@@ -197,8 +200,8 @@ public class RecipeLoader implements Listener {
     public void printGroupsDebugInfo(){
         for(RecipeGroup group : groupedRecipes){
             Debug.Send("group of grouped recipes:");
-            Debug.Send("   enhanced recipes: " + group.getEnhancedRecipes().stream().filter(x -> x != null).map(x -> x.getResult().toString()).collect(Collectors.joining(", ")));
-            Debug.Send("   server recipes: " + group.getServerRecipes().stream().filter(x -> x != null).map(x -> x.getResult().toString()).collect(Collectors.joining(", ")));
+            Debug.Send("   enhanced recipes: " + group.getEnhancedRecipes().stream().filter(Objects::nonNull).map(x -> x.getResult().toString()).collect(Collectors.joining(", ")));
+            Debug.Send("   server recipes: " + group.getServerRecipes().stream().filter(Objects::nonNull).map(x -> x.getResult().toString()).collect(Collectors.joining(", ")));
         }
     }
 
@@ -210,8 +213,7 @@ public class RecipeLoader implements Listener {
             disabledServerRecipes.add(r);
 
             groupedRecipes.forEach(x -> {
-                if(x.getServerRecipes().contains(r))
-                    x.getServerRecipes().remove(r);
+                x.getServerRecipes().remove(r);
             });
             syncServerRecipeState();
             return true;
@@ -232,6 +234,6 @@ public class RecipeLoader implements Listener {
 
     public void disableServerRecipes(List<Recipe> disabledServerRecipes){
         //No need to be efficient here, this'll only run once.
-        disabledServerRecipes.forEach(x -> disableServerRecipe(x));
+        disabledServerRecipes.forEach(this::disableServerRecipe);
     }
 }

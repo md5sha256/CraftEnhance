@@ -1,27 +1,24 @@
 package com.dutchjelly.craftenhance.gui.guis;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.dutchjelly.craftenhance.IEnhancedRecipe;
 import com.dutchjelly.craftenhance.PermissionTypes;
-
 import com.dutchjelly.craftenhance.crafthandling.recipes.WBRecipe;
 import com.dutchjelly.craftenhance.gui.GuiManager;
 import com.dutchjelly.craftenhance.gui.templates.GuiTemplate;
 import com.dutchjelly.craftenhance.gui.util.ButtonType;
 import com.dutchjelly.craftenhance.gui.util.GuiUtil;
 import com.dutchjelly.craftenhance.messaging.Debug;
-
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RecipesViewer extends GUIElement {
 
@@ -49,7 +46,7 @@ public class RecipesViewer extends GUIElement {
         int itemsPerPage = getTemplate().getFillSpace().size();
         int requiredPages = Math.max((int)Math.ceil((double)recipes.size()/itemsPerPage), 1);
         //We need more pages if statically positioned recipes are placed at a higher page index.
-        requiredPages = Math.max(requiredPages, recipes.stream().map(x -> x.getPage()).max(Integer::compare).orElse(0)+1);
+        requiredPages = Math.max(requiredPages, recipes.stream().map(IEnhancedRecipe::getPage).max(Integer::compare).orElse(0)+1);
 
         List<Integer> fillSpace = getTemplate().getFillSpace();
 

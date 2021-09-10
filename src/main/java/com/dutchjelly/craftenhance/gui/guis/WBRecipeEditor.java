@@ -5,9 +5,9 @@ import com.dutchjelly.craftenhance.crafthandling.RecipeLoader;
 import com.dutchjelly.craftenhance.crafthandling.recipes.WBRecipe;
 import com.dutchjelly.craftenhance.gui.GuiManager;
 import com.dutchjelly.craftenhance.gui.templates.GuiTemplate;
-import com.dutchjelly.craftenhance.gui.util.InfoItemPlaceHolders;
 import com.dutchjelly.craftenhance.gui.util.ButtonType;
 import com.dutchjelly.craftenhance.gui.util.GuiUtil;
+import com.dutchjelly.craftenhance.gui.util.InfoItemPlaceHolders;
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class WBRecipeEditor extends GUIElement {
 	
@@ -54,11 +55,11 @@ public class WBRecipeEditor extends GUIElement {
     }
 
     private void handlePermissionSetCB(String message) {
-        if(message == null || message.trim() == "") return;
+        if(message == null || message.trim().equals("")) return;
 
         message = message.trim();
 
-        if(message.toLowerCase().equals("q")) return;
+        if(message.equalsIgnoreCase("q")) return;
 
         if(message.equals("-")){
             permission = "";
@@ -86,11 +87,11 @@ public class WBRecipeEditor extends GUIElement {
 	}
 
 	public void handlePositionChange(String message){
-	    if(message == null || message.trim() == "") return;
+	    if(message == null || message.trim().equals("")) return;
 
 	    if(message.toLowerCase().equals("q")) return;
 
-	    String args[] = message.split(" ");
+	    String[] args = message.split(" ");
 
 	    if(args.length != 2) {
 	        Messenger.Message("Please specify a page and slot number separated by a space.", getPlayer());
@@ -231,7 +232,7 @@ public class WBRecipeEditor extends GUIElement {
             throw new ConfigError("Error, fill space of wb recipe editor contains null element.");
         }
 
-	    ItemStack newContents[] = getTemplate().getFillSpace().subList(0,9).stream().map(x -> {
+	    ItemStack[] newContents = getTemplate().getFillSpace().subList(0,9).stream().map(x -> {
 	        ItemStack item = inventory.getItem(x);
 	        if(item == null) return null;
 	        if(item.getAmount() != 1) {
@@ -243,7 +244,7 @@ public class WBRecipeEditor extends GUIElement {
 
 		ItemStack newResult = inventory.getItem(getTemplate().getFillSpace().get(9));
 
-		if(!Arrays.stream(newContents).anyMatch(x -> x != null)){
+		if(Arrays.stream(newContents).noneMatch(Objects::nonNull)){
 		    Messenger.Message("The recipe is empty.", getPlayer());
 		    return;
         }
@@ -263,8 +264,7 @@ public class WBRecipeEditor extends GUIElement {
 		RecipeLoader.getInstance().loadRecipe(recipe);
 
 		Messenger.Message("Successfully saved the recipe.", getPlayer());
-		return;
-	}
+    }
 
 
 }

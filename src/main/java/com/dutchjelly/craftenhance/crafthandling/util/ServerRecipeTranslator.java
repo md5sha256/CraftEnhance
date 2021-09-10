@@ -4,9 +4,7 @@ package com.dutchjelly.craftenhance.crafthandling.util;
 import com.dutchjelly.bukkitadapter.Adapter;
 import com.dutchjelly.craftenhance.CraftEnhance;
 import com.dutchjelly.craftenhance.crafthandling.recipes.WBRecipe;
-import com.dutchjelly.craftenhance.messaging.Debug;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -14,8 +12,8 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class ServerRecipeTranslator {
@@ -25,7 +23,7 @@ public class ServerRecipeTranslator {
     private static List<String> UsedKeys = new ArrayList<>();
 
     public static ShapedRecipe translateShapedEnhancedRecipe(ItemStack[] content, ItemStack result, String key){
-        if(!Arrays.asList(content).stream().anyMatch(x -> x != null))
+        if(Arrays.stream(content).noneMatch(Objects::nonNull))
             return null;
         Random r = new Random();
         String recipeKey = key.toLowerCase().replaceAll("[^a-z0-9 ]", "");
@@ -33,7 +31,7 @@ public class ServerRecipeTranslator {
         while(UsedKeys.contains(recipeKey)) recipeKey += String.valueOf(r.nextInt(10));
         if(!UsedKeys.contains(recipeKey))
             UsedKeys.add(recipeKey);
-        ShapedRecipe shaped = Adapter.GetShapedRecipe(
+        ShapedRecipe shaped = Adapter.getShapedRecipe(
                 CraftEnhance.getPlugin(CraftEnhance.class), KeyPrefix + recipeKey, result
         );
         shaped.shape(GetShape(content));
@@ -48,7 +46,7 @@ public class ServerRecipeTranslator {
 
 
     public static ShapelessRecipe translateShapelessEnhancedRecipe(ItemStack[] content, ItemStack result, String key){
-        List<ItemStack> ingredients = Arrays.stream(content).filter(x -> x != null).collect(Collectors.toList());
+        List<ItemStack> ingredients = Arrays.stream(content).filter(Objects::nonNull).collect(Collectors.toList());
         if(ingredients.size() == 0)
             return null;
 
@@ -58,10 +56,10 @@ public class ServerRecipeTranslator {
         while(UsedKeys.contains(recipeKey)) recipeKey += String.valueOf(r.nextInt(10));
         if(!UsedKeys.contains(recipeKey))
             UsedKeys.add(recipeKey);
-        ShapelessRecipe shapeless = Adapter.GetShapelessRecipe(
+        ShapelessRecipe shapeless = Adapter.getShapelessRecipe(
                 CraftEnhance.getPlugin(CraftEnhance.class), KeyPrefix + recipeKey, result
         );
-        ingredients.forEach(x -> Adapter.AddIngredient(shapeless, x));
+        ingredients.forEach(x -> Adapter.addIngredient(shapeless, x));
         return shapeless;
     }
 
@@ -86,13 +84,13 @@ public class ServerRecipeTranslator {
 
     public static ItemStack[] translateShapelessRecipe(ShapelessRecipe recipe){
         if(recipe == null || recipe.getIngredientList() == null) return null;
-        return recipe.getIngredientList().stream().toArray(ItemStack[]::new);
+        return recipe.getIngredientList().toArray(new ItemStack[0]);
     }
 
 
     //Gets the shape of the recipe 'content'.
     private static String[] GetShape(ItemStack[] content){
-        String recipeShape[] = {"","",""};
+        String[] recipeShape = {"","",""};
         for(int i = 0; i < 9; i++){
             if(content[i] != null)
                 recipeShape[i/3] += (char)('A' + i);
@@ -137,7 +135,7 @@ public class ServerRecipeTranslator {
     private static void MapIngredients(ShapedRecipe recipe, ItemStack[] content){
         for(int i = 0; i < 9; i++){
             if(content[i] != null){
-                Adapter.SetIngredient(recipe, (char) ('A' + i), content[i]);
+                Adapter.setIngredient(recipe, (char) ('A' + i), content[i]);
             }
         }
     }

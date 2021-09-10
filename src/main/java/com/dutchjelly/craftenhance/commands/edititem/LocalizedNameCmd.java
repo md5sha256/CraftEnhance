@@ -1,12 +1,11 @@
 package com.dutchjelly.craftenhance.commands.edititem;
 
+import com.dutchjelly.craftenhance.commandhandling.CommandRoute;
+import com.dutchjelly.craftenhance.commandhandling.CustomCmdHandler;
+import com.dutchjelly.craftenhance.commandhandling.ICommand;
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.dutchjelly.craftenhance.commandhandling.ICommand;
-import com.dutchjelly.craftenhance.commandhandling.CommandRoute;
-import com.dutchjelly.craftenhance.commandhandling.CustomCmdHandler;
 
 @CommandRoute(cmdPath="edititem.localizedname", perms="perms.item-editor")
 public class LocalizedNameCmd implements ICommand {

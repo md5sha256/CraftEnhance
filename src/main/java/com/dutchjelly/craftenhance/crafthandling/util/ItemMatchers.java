@@ -1,5 +1,6 @@
 package com.dutchjelly.craftenhance.crafthandling.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemMatchers{
@@ -17,7 +18,7 @@ public class ItemMatchers{
         //Also use this method in case some ItemStack has an overwritten method.
         if(a.isSimilar(b)) return true;
 
-        return a.getType().equals(b.getType()) && a.getDurability() == b.getDurability() && a.hasItemMeta() == b.hasItemMeta() && (!a.hasItemMeta() || a.getItemMeta().toString().equals(b.getItemMeta().toString()));
+        return Bukkit.getItemFactory().equals(a.getItemMeta(), b.getItemMeta());
     }
 
     public static boolean matchType(ItemStack a, ItemStack b){

@@ -33,8 +33,8 @@ public class VersionChecker {
 
     public boolean runVersionCheck(){
         String serverVersion = plugin.getServer().getBukkitVersion();
-        Messenger.Message("Running a version check to check that the server is compatible with game version " + String.join(", ", Adapter.CompatibleVersions()) + ".");
-        for(String version : Adapter.CompatibleVersions()){
+        Messenger.Message("Running a version check to check that the server is compatible with game version " + String.join(", ", Adapter.compatibleVersions()) + ".");
+        for(String version : Adapter.compatibleVersions()){
             if(serverVersion.contains(version)){
                 Messenger.Message("The correct version is installed.");
                 return true;
@@ -42,7 +42,7 @@ public class VersionChecker {
         }
         Messenger.Message("");
         Messenger.Message("!! Incompatibility found !!");
-        Messenger.Message("The installed version of CraftEnhance only supports spigot/bukkit versions \"" + String.join(", ", Adapter.CompatibleVersions()) + "\"");
+        Messenger.Message("The installed version of CraftEnhance only supports spigot/bukkit versions \"" + String.join(", ", Adapter.compatibleVersions()) + "\"");
         Messenger.Message("while your server is running " + serverVersion + ".");
         Messenger.Message("The correct version can be installed here: https://dev.bukkit.org/projects/craftenhance/files");
         Messenger.Message("When installing the plugin make sure that the game version matches your bukkit or spigot version.");
@@ -58,6 +58,6 @@ public class VersionChecker {
 
     private boolean isOutDated(String version){
         String currentVersion = plugin.getDescription().getVersion();
-        return !Arrays.stream(version.split("\n")).anyMatch(x -> x.equalsIgnoreCase(currentVersion));
+        return Arrays.stream(version.split("\n")).noneMatch(x -> x.equalsIgnoreCase(currentVersion));
     }
 }

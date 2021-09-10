@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.inventory.ItemStack;
@@ -43,11 +42,7 @@ public class SkullCreator {
      * Creates a player skull, should work in both legacy and new Bukkit APIs.
      */
     public static ItemStack createSkull() {
-        try {
-            return new ItemStack(Material.valueOf("PLAYER_HEAD"));
-        } catch (IllegalArgumentException e) {
-            return new ItemStack(Adapter.getMaterial("SKULL_ITEM"), 1, (byte) 3);
-        }
+        return new ItemStack(Material.PLAYER_HEAD);
     }
 
     /**
@@ -123,7 +118,7 @@ public class SkullCreator {
         notNull(id, "id");
 
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        Adapter.SetOwningPlayer(meta,Bukkit.getOfflinePlayer(id));
+        Adapter.setOwningPlayer(meta,Bukkit.getOfflinePlayer(id));
         item.setItemMeta(meta);
 
         return item;
@@ -227,16 +222,7 @@ public class SkullCreator {
     }
 
     private static void setToSkull(Block block) {
-        checkLegacy();
-
-        try {
-            block.setType(Material.valueOf("PLAYER_HEAD"), false);
-        } catch (IllegalArgumentException e) {
-            block.setType(Material.valueOf("SKULL"), false);
-            Skull state = (Skull) block.getState();
-            state.setSkullType(SkullType.PLAYER);
-            state.update(false, false);
-        }
+        block.setType(Material.PLAYER_HEAD, false);
     }
 
     private static void notNull(Object o, String name) {
@@ -253,7 +239,7 @@ public class SkullCreator {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl.toString() + "\"}}}";
+        String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl + "\"}}}";
         return Base64.getEncoder().encodeToString(toEncode.getBytes());
     }
 
@@ -300,24 +286,6 @@ public class SkullCreator {
             } catch (NoSuchFieldException | IllegalAccessException ex2) {
                 ex2.printStackTrace();
             }
-        }
-    }
-
-    // suppress warning since PLAYER_HEAD doesn't exist in 1.12.2,
-    // but we expect this and catch the error at runtime.
-    @SuppressWarnings("JavaReflectionMemberAccess")
-    private static void checkLegacy() {
-        try {
-            // if both of these succeed, then we are running
-            // in a legacy api, but on a modern (1.13+) server.
-            Material.class.getDeclaredField("PLAYER_HEAD");
-            Material.valueOf("SKULL");
-
-            if (!warningPosted) {
-                Bukkit.getLogger().warning("SKULLCREATOR API - Using the legacy bukkit API with 1.13+ bukkit versions is not supported!");
-                warningPosted = true;
-            }
-        } catch (NoSuchFieldException | IllegalArgumentException ignored) {
         }
     }
 

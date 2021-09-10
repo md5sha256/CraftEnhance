@@ -20,7 +20,7 @@ public class CraftEnhanceAPI {
 
     public static boolean fireEvent(IEnhancedRecipe recipe, Player p, Inventory craftingInventory, RecipeGroup alternatives){
         try{
-            return customCraftListeners.stream().map(x -> x.listener(recipe, p, craftingInventory, alternatives)).anyMatch(x -> x);
+            return customCraftListeners.stream().anyMatch(x -> x.listener(recipe, p, craftingInventory, alternatives));
         }catch(Exception e){
             e.printStackTrace();
         }

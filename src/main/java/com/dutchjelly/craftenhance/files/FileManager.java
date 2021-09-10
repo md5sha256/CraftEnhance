@@ -1,31 +1,26 @@
 package com.dutchjelly.craftenhance.files;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.logging.Logger;
-
-import com.dutchjelly.craftenhance.ConfigError;
 import com.dutchjelly.craftenhance.CraftEnhance;
 import com.dutchjelly.craftenhance.IEnhancedRecipe;
-import com.dutchjelly.craftenhance.crafthandling.recipes.WBRecipe;
 import com.dutchjelly.craftenhance.messaging.Debug;
 import com.dutchjelly.craftenhance.messaging.Messenger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 import lombok.SneakyThrows;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class FileManager {
 
@@ -156,7 +151,7 @@ public class FileManager {
 		base = base.replaceAll("\\.", "");
 		String unique = base;
 		int incrementer = 1;
-		while(items.keySet().contains(unique))
+		while(items.containsKey(unique))
 			unique = base + incrementer++;
 		return unique;
 	}
@@ -251,9 +246,9 @@ public class FileManager {
 	public void overrideSave(){
 		Debug.Send("Overriding saved recipes with new list..");
 		List<IEnhancedRecipe> cloned = new ArrayList<>();
-		recipes.forEach(x -> cloned.add(x));
+		recipes.forEach(cloned::add);
 		removeAllRecipes();
-		cloned.forEach(x -> saveRecipe(x));
+		cloned.forEach(this::saveRecipe);
 		recipes = cloned;
 		recipesConfig = getYamlConfig(recipesFile);
 	}

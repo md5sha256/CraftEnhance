@@ -2,16 +2,17 @@ package com.dutchjelly.craftenhance.gui.templates;
 
 import com.dutchjelly.craftenhance.ConfigError;
 import com.dutchjelly.craftenhance.gui.util.ButtonType;
-import com.dutchjelly.craftenhance.messaging.Debug;
-import com.dutchjelly.craftenhance.messaging.Messenger;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -71,7 +72,7 @@ public class GuiTemplate {
         }
         invTitles = names;
         invTitle = names.get(0);
-        template = templateInventoryContent.stream().toArray(ItemStack[]::new);
+        template = templateInventoryContent.toArray(new ItemStack[0]);
 
         ConfigurationSection buttonSection = config.getConfigurationSection("button-mapping");
 
@@ -91,15 +92,15 @@ public class GuiTemplate {
         List<Integer> slots = new ArrayList<>();
 
         //Allow empty ranges.
-        if(range == null || range == "") return slots;
+        if(range == null || range.equals("")) return slots;
 
         try{
             for(String subRange : range.split(",")){
-                if(subRange == "") continue;
+                if(subRange.equals("")) continue;
                 if (subRange.contains("-")) {
-                    int first = Integer.valueOf(subRange.split("-")[0]);
-                    int second = Integer.valueOf(subRange.split("-")[1]);
-                    slots.addAll(IntStream.range(first, second + 1).mapToObj(x -> x).collect(Collectors.toList()));
+                    int first = Integer.parseInt(subRange.split("-")[0]);
+                    int second = Integer.parseInt(subRange.split("-")[1]);
+                    slots.addAll(IntStream.range(first, second + 1).boxed().collect(Collectors.toList()));
                 } else slots.add(Integer.valueOf(subRange));
             }
         }catch(NumberFormatException e){

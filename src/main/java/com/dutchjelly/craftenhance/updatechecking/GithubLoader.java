@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 public class GithubLoader {
 
@@ -38,7 +39,7 @@ public class GithubLoader {
             int i;
             while((i = inputStream.read(buffer)) != -1)
                 outputStream.write(buffer, 0, i);
-            version = new String(outputStream.toByteArray(), "UTF-8");
+            version = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             Messenger.Message("(fatal) The update checker could not extract the version from the url connection.");
         }

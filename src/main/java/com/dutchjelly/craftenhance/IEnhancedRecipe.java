@@ -4,7 +4,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
-import java.util.List;
 import java.util.Map;
 
 public interface IEnhancedRecipe extends ConfigurationSerializable {

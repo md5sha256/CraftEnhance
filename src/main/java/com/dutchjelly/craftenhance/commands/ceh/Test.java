@@ -8,22 +8,21 @@ import com.dutchjelly.craftenhance.crafthandling.recipes.WBRecipe;
 import com.dutchjelly.craftenhance.crafthandling.util.ItemMatchers;
 import com.dutchjelly.craftenhance.crafthandling.util.ServerRecipeTranslator;
 import com.dutchjelly.craftenhance.crafthandling.util.WBRecipeComparer;
-import com.dutchjelly.craftenhance.itemcreation.ItemCreator;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.SkullType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -85,7 +84,7 @@ public class Test implements ICommand{
 
     //Inefficient algorithm for comparing shapes so we can test the efficient algorithm.
     private String shiftToLeftTop(String s){
-        if(s.trim() == "") return s;
+        if(s.trim().equals("")) return s;
         if(s.length() != 9) return s;
         while(s.startsWith("---")) s = s.substring(3) + "---";
         while(s.length() > 0 && s.charAt(0) == '-' && s.charAt(3) == '-' && s.charAt(6) == '-') s = s.substring(1) + '-';
@@ -126,17 +125,17 @@ public class Test implements ICommand{
         final int randomtestcount = 50;
         Random r = new Random();
         for(int t = 0; t < randomtestcount; t++){
-            String shape = "";
+            StringBuilder shape = new StringBuilder();
             int counter = 0; //count amount of items randomly generated
             for(int j = 0; j < 9; j++){
-                shape += r.nextBoolean() ? '-' : 'i';
-                if(shape.endsWith("i")){
+                shape.append(r.nextBoolean() ? '-' : 'i');
+                if(shape.toString().endsWith("i")){
                     counter++;
                 }
             }
             if(counter == 0) continue;
-            a = buildRecipe(shape);
-            String othershape = shiftToLeftTop(shape);
+            a = buildRecipe(shape.toString());
+            String othershape = shiftToLeftTop(shape.toString());
 
             b = buildRecipe(othershape);
             Bukkit.getLogger().log(Level.INFO, shape + "\n testing " + othershape);
@@ -144,10 +143,10 @@ public class Test implements ICommand{
 
             //Try to shuffle elements. and check if they match with randomly generated one
             for(int matchtest = 0; matchtest < 200; matchtest++){
-                List<String> shuffeledShape = Arrays.asList(shape.split(""));
+                List<String> shuffeledShape = Arrays.asList(shape.toString().split(""));
                 Collections.shuffle(shuffeledShape, r);
                 String s = String.join("", shuffeledShape);
-                boolean matches = shiftToLeftTop(s).equals(shiftToLeftTop(shape));
+                boolean matches = shiftToLeftTop(s).equals(shiftToLeftTop(shape.toString()));
                 c = buildRecipe(s);
                 boolean success = (matches && WBRecipeComparer.shapeIterationMatches(a,c, ItemMatchers::matchType, 3))
                         || (!matches && !WBRecipeComparer.shapeIterationMatches(a,c, ItemMatchers::matchType, 3));
@@ -291,7 +290,7 @@ public class Test implements ICommand{
         Assert(group.getServerRecipes().size() == 0); //there's no similar server recipe
         Assert(RecipeLoader.getInstance().findGroupsByResult(supahDiamond).contains(group));
         Assert(RecipeLoader.getInstance().findGroupsByResult(new ItemStack(supahDiamond)).contains(group));
-        Assert(!group.getServerRecipes().stream().anyMatch(x -> x.getResult().getType().equals(Material.DIAMOND)));
+        Assert(group.getServerRecipes().stream().noneMatch(x -> x.getResult().getType().equals(Material.DIAMOND)));
 
         RecipeLoader.getInstance().unloadRecipe(recipe);
         Assert(!RecipeLoader.getInstance().isLoadedAsServerRecipe(recipe));
@@ -317,7 +316,7 @@ public class Test implements ICommand{
 
     private void testShapeless(CommandSender p){
         final int nRandomTests = 500;
-        ItemStack[] items = Arrays.asList(Material.values()).stream().map(ItemStack::new).toArray(ItemStack[]::new);
+        ItemStack[] items = Arrays.stream(Material.values()).map(ItemStack::new).toArray(ItemStack[]::new);
         Random r = new Random();
         for(int i = 0; i < nRandomTests; i++){
             List<ItemStack> ingredients = new ArrayList<>();
@@ -326,16 +325,19 @@ public class Test implements ICommand{
             for(int j = 0; j < 50; j++){
                 List<ItemStack> shuffled = new ArrayList<>(ingredients);
                 Collections.shuffle(shuffled, r);
-                Assert(WBRecipeComparer.ingredientsMatch(ingredients.stream().toArray(ItemStack[]::new), shuffled.stream().toArray(ItemStack[]::new), ItemMatchers::matchMeta));
+                Assert(WBRecipeComparer.ingredientsMatch(ingredients.toArray(new ItemStack[0]),
+                        shuffled.toArray(new ItemStack[0]), ItemMatchers::matchMeta));
                 List<ItemStack> lessIngredients = new ArrayList<>(ingredients);
                 lessIngredients.stream().filter(x -> x != null && r.nextInt(4) == 1).collect(Collectors.toList());
                 lessIngredients.set(r.nextInt(ingredients.size()), null);
                 Collections.shuffle(lessIngredients, r);
-                Assert(!WBRecipeComparer.ingredientsMatch(ingredients.stream().toArray(ItemStack[]::new), lessIngredients.stream().toArray(ItemStack[]::new), ItemMatchers::matchMeta));
+                Assert(!WBRecipeComparer.ingredientsMatch(ingredients.toArray(new ItemStack[0]),
+                        lessIngredients.toArray(new ItemStack[0]), ItemMatchers::matchMeta));
                 List<ItemStack> moreIngredients = new ArrayList<>(ingredients);
-                Arrays.asList(new int[1+r.nextInt(5)]).forEach(x -> moreIngredients.add(items[r.nextInt(items.length)]));
+                Collections.singletonList(new int[1 + r.nextInt(5)]).forEach(x -> moreIngredients.add(items[r.nextInt(items.length)]));
                 Collections.shuffle(moreIngredients);
-                Assert(!WBRecipeComparer.ingredientsMatch(ingredients.stream().toArray(ItemStack[]::new), moreIngredients.stream().toArray(ItemStack[]::new), ItemMatchers::matchMeta));
+                Assert(!WBRecipeComparer.ingredientsMatch(ingredients.toArray(new ItemStack[0]),
+                        moreIngredients.toArray(new ItemStack[0]), ItemMatchers::matchMeta));
             }
         }
         p.sendMessage("test successfully completed!");
